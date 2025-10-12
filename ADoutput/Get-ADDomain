@@ -1,0 +1,125 @@
+  AD详细信息介绍：
+    AllowedDNSSuffixes:
+    允许的 DNS 后缀列表，通常为空，除非域配置了额外的 DNS 后缀。
+
+    ChildDomains:
+    当前域的子域列表。如果域没有子域，则为空。
+
+    ComputersContainer:
+    默认的计算机对象容器的 Distinguished Name (DN)。这是新加入域的计算机账户默认存放的位置。
+
+    DeletedObjectsContainer:
+    存储被删除对象的容器的 DN。被删除的对象会暂时存储在此容器中，直到垃圾回收机制清理它们。
+
+    DistinguishedName:
+    当前域的 DN，表示域在目录树中的唯一位置。
+
+    DNSRoot:
+    当前域的 DNS 名称。
+
+    DomainControllersContainer:
+    默认的域控制器对象容器的 DN。域控制器账户默认存放在此容器中。
+
+    DomainMode:
+    当前域的功能级别。例如，Windows2012Domain 表示域功能级别为 Windows Server 2012。
+
+    DomainSID:
+    当前域的安全标识符 (SID)，用于唯一标识域。
+
+    ForeignSecurityPrincipalsContainer:
+    存储外部安全主体（如信任域中的用户或组）的容器的 DN。
+
+    Forest:
+    当前域所属的林的 DNS 名称。
+
+    InfrastructureMaster:
+    当前域的基础结构主机角色所在的域控制器。
+
+    LastLogonReplicationInterval:
+    最后一次登录时间的复制间隔。如果未配置，则为空。
+
+    LinkedGroupPolicyObjects:
+    链接到当前域的组策略对象 (GPO) 列表。
+
+    LostAndFoundContainer:
+    存储丢失和找到的对象的容器的 DN。这些对象通常是由于复制问题导致的。
+
+    ManagedBy:
+    当前域的管理者信息。如果未设置，则为空。
+
+    Name:
+    当前域的名称。
+
+    NetBIOSName:
+    当前域的 NetBIOS 名称，通常是域名的简短版本。
+
+    ObjectClass:
+    当前域对象的类类型，通常为 domainDNS。
+
+    ObjectGUID:
+    当前域对象的全局唯一标识符 (GUID)。
+
+    ParentDomain:
+    当前域的父域。如果域是根域，则为空。
+
+    PDCEmulator:
+    当前域的主域控制器 (PDC) 模拟器角色所在的域控制器。
+
+    PublicKeyRequiredPasswordRolling:
+    指示是否需要公钥密码轮换。如果未配置，则为空。
+
+    QuotasContainer:
+    存储配额信息的容器的 DN。
+
+    ReadOnlyReplicaDirectoryServers:
+    当前域的只读域控制器 (RODC) 列表。如果没有 RODC，则为空。
+
+    ReplicaDirectoryServers:
+    当前域的所有域控制器列表。
+
+    RIDMaster:
+    当前域的相对标识符 (RID) 主机角色所在的域控制器。
+
+    SubordinateReferences:
+    当前域的下级引用列表，通常包括林的配置分区和 DNS 分区。
+
+    SystemsContainer:
+    存储系统级对象（如默认组策略对象）的容器的 DN。
+
+    UsersContainer:
+    默认的用户对象容器的 DN。新创建的用户账户默认存放在此容器中。
+
+
+
+
+AllowedDNSSuffixes                 : {}
+ChildDomains                       : {}
+ComputersContainer                 : CN=Computers,DC=rd,DC=com
+DeletedObjectsContainer            : CN=Deleted Objects,DC=rd,DC=com
+DistinguishedName                  : DC=rd,DC=com
+DNSRoot                            : rd.com
+DomainControllersContainer         : OU=Domain Controllers,DC=rd,DC=com
+DomainMode                         : Windows2012Domain
+DomainSID                          : S-1-5-21-3438909164-4223864119-2367268561
+ForeignSecurityPrincipalsContainer : CN=ForeignSecurityPrincipals,DC=rd,DC=com
+Forest                             : rd.com
+InfrastructureMaster               : WIN-13L1MQMKNIO.rd.com
+LastLogonReplicationInterval       :
+LinkedGroupPolicyObjects           : {CN={31B2F340-016D-11D2-945F-00C04FB984F9},CN=Policies,CN=System,DC=rd,DC=com}
+LostAndFoundContainer              : CN=LostAndFound,DC=rd,DC=com
+ManagedBy                          :
+Name                               : rd
+NetBIOSName                        : RD
+ObjectClass                        : domainDNS
+ObjectGUID                         : af9d3171-4ac9-4002-afeb-f96036e0912c
+ParentDomain                       :
+PDCEmulator                        : WIN-13L1MQMKNIO.rd.com
+PublicKeyRequiredPasswordRolling   :
+QuotasContainer                    : CN=NTDS Quotas,DC=rd,DC=com
+ReadOnlyReplicaDirectoryServers    : {}
+ReplicaDirectoryServers            : {WIN-13L1MQMKNIO.rd.com, Win2016辅助域控.rd.com}
+RIDMaster                          : WIN-13L1MQMKNIO.rd.com
+SubordinateReferences              : {DC=ForestDnsZones,DC=rd,DC=com, DC=DomainDnsZones,DC=rd,DC=com, CN=Configuration,
+                                     DC=rd,DC=com}
+SystemsContainer                   : CN=System,DC=rd,DC=com
+UsersContainer                     : CN=Users,DC=rd,DC=com
