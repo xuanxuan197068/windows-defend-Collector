@@ -1,15 +1,15 @@
-# A simple PowerShell script
+# 一个简单的 PowerShell 脚本
 
-# Display a welcome message
+# 显示欢迎信息
 Write-Output "Welcome to the PowerShell script!"
 
-# Get the current date and time
+# 获取当前日期和时间
 $currentDateTime = Get-Date
 Write-Output "Current Date and Time: $currentDateTime"
 
-# List all files in the current directory
+# 列出当前目录中的所有文件
 Write-Output "Files in the current directory:"
 Get-ChildItem -Path . -File
 
-# End of script
+# 脚本结束
 Write-Output "Script execution completed."
