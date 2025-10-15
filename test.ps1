@@ -1,15 +1,46 @@
-# 一个简单的 PowerShell 脚本
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$Path
+)
 
-# 显示欢迎信息
-Write-Output "Welcome to the PowerShell script!"
+$ErrorActionPreference = 'Continue'
+$overall = 0
 
-# 获取当前日期和时间
-$currentDateTime = Get-Date
-Write-Output "Current Date and Time: $currentDateTime"
+Write-Output ("Target Path: {0}" -f $Path)
 
-# 列出当前目录中的所有文件
-Write-Output "Files in the current directory:"
-Get-ChildItem -Path . -File
+if (-not (Test-Path -LiteralPath $Path)) {
+    Write-Output ("[WARN] Path not found: {0}" -f $Path)
+    $overall = 1
+} else {
+    try {
+        $acl = Get-Acl -LiteralPath $Path -ErrorAction Stop
 
-# 脚本结束
-Write-Output "Script execution completed."
+        # DACL = Access
+        Write-Output '---DACL (Access) SDDL---'
+        try {
+            $daclSddl = $acl.GetSecurityDescriptorSddlForm([System.Security.AccessControl.AccessControlSections]::Access)
+            Write-Output $daclSddl
+        } catch {
+            Write-Output "[ERROR] Failed to get DACL: $($_.Exception.Message)"
+            if ($overall -eq 0) { $overall = 2 }
+        }
+
+        # SACL = Audit（通常需要管理员 + SeSecurityPrivilege）
+        Write-Output '---SACL (Audit) SDDL---'
+        try {
+            $saclSddl = $acl.GetSecurityDescriptorSddlForm([System.Security.AccessControl.AccessControlSections]::Audit)
+            Write-Output $saclSddl
+        } catch {
+            Write-Output "[ERROR] Failed to get SACL (may require admin privileges): $($_.Exception.Message)"
+            if ($overall -eq 0) { $overall = 3 }
+        }
+
+    } catch {
+        Write-Output "[ERROR] Get-Acl failed: $($_.Exception.Message)"
+        $overall = 4
+    }
+}
+
+$global:LASTEXITCODE = $overall
+Write-Output ("RETURN_CODE={0}" -f $overall)
