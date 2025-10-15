@@ -1,4 +1,4 @@
-# 调用方法：.\Get-ACLonPath.ps1 -Path <filename/path>
+# 调用方法：.\Get-ACLonPath.ps1 -Path filename/path
 #输出参考：
 # PS C:\Users\Administrator.RD\desktop> .\Get-PasswordPolicy.ps1
 
