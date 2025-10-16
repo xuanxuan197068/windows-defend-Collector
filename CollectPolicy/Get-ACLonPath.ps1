@@ -1,22 +1,17 @@
 # 调用方法：.\Get-ACLonPath.ps1 -Path filename/path
-#输出参考：
-# PS C:\Users\Administrator.RD\desktop> .\Get-PasswordPolicy.ps1
+# 输出参考：
+# PS C:\Users\Administrator.RD\desktop> .\Get-ACLonPath.ps1 -Path 1.txt
+# ---ICACLS DACL---
+# 1.txt NT AUTHORITY\SYSTEM:(F)
+#       BUILTIN\Administrators:(F)
+#       RD\Administrator:(F)
 
-# 位于命令管道位置 1 的 cmdlet Get-PasswordPolicy.ps1
-# 请为以下参数提供值:
-# Scope: Domain
-# 强制用户在时间到期之后多久必须注销?:     从不
-# 密码最短使用期限(天):                    1
-# 密码最长使用期限(天):                    42
-# 密码长度最小值:                          7
-# 保持的密码历史记录长度:                  24
-# 锁定阈值:                                从不
-# 锁定持续时间(分):                        30
-# 锁定观测窗口(分):                        30
-# 计算机角色:                              BACKUP
-# 命令成功完成。
+# 已成功处理 1 个文件; 处理 0 个文件时失败
+# ---ICACLS SACL (/audit)---
 
-# RETURN_CODE=0
+
+# Audit : {System.Security.AccessControl.FileSystemAuditRule}
+# Sddl  : O:BAG:DUD:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FA;;;LA)S:AI(AU;SA;CCSWWPLORC;;;LA)
 
 
 [CmdletBinding()]

@@ -1,4 +1,4 @@
-#调用方法：Get-UACSettings.ps1
+#调用方法：.\Get-UACSettings.ps1
 #输出参考：
 # PS C:\Users\Administrator\Desktop> .\Get-UACSettings.ps1
 
