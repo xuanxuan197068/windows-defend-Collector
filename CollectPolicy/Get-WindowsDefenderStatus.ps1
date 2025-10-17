@@ -10,6 +10,258 @@ Return code convention (script-internal, 最终返回值见最后):
   4 - 注册表策略读取失败或无结果
   5 - 以上全部步骤均失败
 #>
+#调用方法：.\Get-WindowsDefenderStatus.ps1
+#输出参考：
+# ---Attempt: Get-MpComputerStatus (Protection Status)---
+
+
+# AMEngineVersion                  : 1.1.25090.3001
+# AMProductVersion                 : 4.18.25080.5
+# AMRunningMode                    : Normal
+# AMServiceEnabled                 : True
+# AMServiceVersion                 : 4.18.25080.5
+# AntispywareEnabled               : True
+# AntispywareSignatureAge          : 0
+# AntispywareSignatureLastUpdated  : 2025/10/16 15:07:35
+# AntispywareSignatureVersion      : 1.439.218.0
+# AntivirusEnabled                 : True
+# AntivirusSignatureAge            : 0
+# AntivirusSignatureLastUpdated    : 2025/10/16 15:07:36
+# AntivirusSignatureVersion        : 1.439.218.0
+# BehaviorMonitorEnabled           : False
+# ComputerID                       : BC064DAE-5AC5-4FD2-B808-BB26866249B5
+# ComputerState                    : 0
+# DefenderSignaturesOutOfDate      : False
+# DeviceControlDefaultEnforcement  :
+# DeviceControlPoliciesLastUpdated : 2023/6/6 15:36:11
+# DeviceControlState               : Disabled
+# FullScanAge                      : 4294967295
+# FullScanEndTime                  :
+# FullScanOverdue                  : False
+# FullScanRequired                 : False
+# FullScanSignatureVersion         :
+# FullScanStartTime                :
+# InitializationProgress           : ServiceStartedSuccessfully
+# IoavProtectionEnabled            : False
+# IsTamperProtected                : False
+# IsVirtualMachine                 : False
+# LastFullScanSource               : 0
+# LastQuickScanSource              : 2
+# NISEnabled                       : False
+# NISEngineVersion                 : 0.0.0.0
+# NISSignatureAge                  : 65535
+# NISSignatureLastUpdated          :
+# NISSignatureVersion              :
+# OnAccessProtectionEnabled        : False
+# ProductStatus                    : 524288
+# QuickScanAge                     : 0
+# QuickScanEndTime                 : 2025/10/16 18:55:31
+# QuickScanOverdue                 : False
+# QuickScanSignatureVersion        : 1.439.216.0
+# QuickScanStartTime               : 2025/10/16 18:55:06
+# RealTimeProtectionEnabled        : False
+# RealTimeScanDirection            : 0
+# RebootRequired                   : False
+# SmartAppControlExpiration        :
+# SmartAppControlState             : Off
+# TamperProtectionSource           : UI
+# TDTCapable                       : N/A
+# TDTMode                          : N/A
+# TDTSiloType                      : N/A
+# TDTStatus                        : N/A
+# TDTTelemetry                     : N/A
+# TroubleShootingDailyMaxQuota     :
+# TroubleShootingDailyQuotaLeft    :
+# TroubleShootingEndTime           :
+# TroubleShootingExpirationLeft    :
+# TroubleShootingMode              :
+# TroubleShootingModeSource        :
+# TroubleShootingQuotaResetTime    :
+# TroubleShootingStartTime         :
+# PSComputerName                   :
+# CimClass                         : ROOT/Microsoft/Windows/Defender:MSFT_MpComputerStatus
+# CimInstanceProperties            : {AMEngineVersion, AMProductVersion, AMRunningMode, AMServiceEnabled...}
+# CimSystemProperties              : Microsoft.Management.Infrastructure.CimSystemProperties
+
+
+
+
+# ---Attempt: Get-MpPreference (Preferences / Policy)---
+
+
+# AllowDatagramProcessingOnWinServer                    : False
+# AllowNetworkProtectionDownLevel                       : False
+# AllowNetworkProtectionOnWinServer                     : False
+# AllowSwitchToAsyncInspection                          : True
+# ApplyDisableNetworkScanningToIOAV                     : False
+# AttackSurfaceReductionOnlyExclusions                  :
+# AttackSurfaceReductionRules_Actions                   :
+# AttackSurfaceReductionRules_Ids                       :
+# AttackSurfaceReductionRules_RuleSpecificExclusions    :
+# AttackSurfaceReductionRules_RuleSpecificExclusions_Id :
+# BruteForceProtectionAggressiveness                    : 0
+# BruteForceProtectionConfiguredState                   : 0
+# BruteForceProtectionExclusions                        :
+# BruteForceProtectionLocalNetworkBlocking              : False
+# BruteForceProtectionMaxBlockTime                      : 0
+# BruteForceProtectionSkipLearningPeriod                : False
+# CheckForSignaturesBeforeRunningScan                   : False
+# CloudBlockLevel                                       : 0
+# CloudExtendedTimeout                                  : 0
+# ComputerID                                            : BC064DAE-5AC5-4FD2-B808-BB26866249B5
+# ControlledFolderAccessAllowedApplications             :
+# ControlledFolderAccessDefaultProtectedFolders         : {N/A: Controlled Folder Access is disabled}
+# ControlledFolderAccessProtectedFolders                :
+# DefinitionUpdatesChannel                              : 0
+# DisableArchiveScanning                                : False
+# DisableAutoExclusions                                 : False
+# DisableBehaviorMonitoring                             : False
+# DisableBlockAtFirstSeen                               : False
+# DisableCacheMaintenance                               : False
+# DisableCatchupFullScan                                : True
+# DisableCatchupQuickScan                               : True
+# DisableCoreServiceECSIntegration                      : False
+# DisableCoreServiceTelemetry                           : False
+# DisableCpuThrottleOnIdleScans                         : True
+# DisableDatagramProcessing                             : False
+# DisableDnsOverTcpParsing                              : False
+# DisableDnsParsing                                     : False
+# DisableEmailScanning                                  : True
+# DisableFtpParsing                                     : False
+# DisableGradualRelease                                 : False
+# DisableHttpParsing                                    : False
+# DisableInboundConnectionFiltering                     : False
+# DisableIOAVProtection                                 : False
+# DisableNetworkProtectionPerfTelemetry                 : False
+# DisablePrivacyMode                                    : False
+# DisableQuicParsing                                    : True
+# DisableRdpParsing                                     : False
+# DisableRealtimeMonitoring                             : True
+# DisableRemovableDriveScanning                         : True
+# DisableRestorePoint                                   : True
+# DisableScanningMappedNetworkDrivesForFullScan         : True
+# DisableScanningNetworkFiles                           : False
+# DisableScriptScanning                                 : False
+# DisableSmtpParsing                                    : False
+# DisableSshParsing                                     : False
+# DisableTamperProtection                               : True
+# DisableTlsParsing                                     : False
+# EnableControlledFolderAccess                          : 0
+# EnableConvertWarnToBlock                              : False
+# EnableDnsSinkhole                                     : True
+# EnableFileHashComputation                             : False
+# EnableFullScanOnBatteryPower                          : False
+# EnableLowCpuPriority                                  : False
+# EnableNetworkProtection                               : 0
+# EnableUdpReceiveOffload                               : False
+# EnableUdpSegmentationOffload                          : False
+# EngineUpdatesChannel                                  : 0
+# ExclusionExtension                                    :
+# ExclusionIpAddress                                    :
+# ExclusionPath                                         : {C:\Tools}
+# ExclusionProcess                                      :
+# ForceUseProxyOnly                                     : False
+# HideExclusionsFromLocalUsers                          : True
+# HighThreatDefaultAction                               : 0
+# IntelTDTEnabled                                       :
+# LowThreatDefaultAction                                : 0
+# MAPSReporting                                         : 0
+# MeteredConnectionUpdates                              : False
+# ModerateThreatDefaultAction                           : 0
+# NetworkProtectionReputationMode                       : 0
+# OobeEnableRtpAndSigUpdate                             : False
+# PerformanceModeStatus                                 : 1
+# PlatformUpdatesChannel                                : 0
+# ProxyBypass                                           :
+# ProxyPacUrl                                           :
+# ProxyServer                                           :
+# PUAProtection                                         : 0
+# QuarantinePurgeItemsAfterDelay                        : 90
+# QuickScanIncludeExclusions                            : 0
+# RandomizeScheduleTaskTimes                            : True
+# RealTimeScanDirection                                 : 0
+# RemediationScheduleDay                                : 0
+# RemediationScheduleTime                               : 02:00:00
+# RemoteEncryptionProtectionAggressiveness              : 0
+# RemoteEncryptionProtectionConfiguredState             : 0
+# RemoteEncryptionProtectionExclusions                  :
+# RemoteEncryptionProtectionMaxBlockTime                : 0
+# RemoveScanningThreadPoolCap                           : False
+# ReportDynamicSignatureDroppedEvent                    : False
+# ReportingAdditionalActionTimeOut                      : 10080
+# ReportingCriticalFailureTimeOut                       : 10080
+# ReportingNonCriticalTimeOut                           : 1440
+# ScanAvgCPULoadFactor                                  : 50
+# ScanOnlyIfIdleEnabled                                 : True
+# ScanParameters                                        : 1
+# ScanPurgeItemsAfterDelay                              : 15
+# ScanScheduleDay                                       : 0
+# ScanScheduleOffset                                    : 120
+# ScanScheduleQuickScanTime                             : 00:00:00
+# ScanScheduleTime                                      : 02:00:00
+# SchedulerRandomizationTime                            : 4
+# ServiceHealthReportInterval                           : 60
+# SevereThreatDefaultAction                             : 0
+# SharedSignaturesPath                                  :
+# SharedSignaturesPathUpdateAtScheduledTimeOnly         : False
+# SignatureAuGracePeriod                                : 0
+# SignatureBlobFileSharesSources                        :
+# SignatureBlobUpdateInterval                           : 60
+# SignatureDefinitionUpdateFileSharesSources            :
+# SignatureDisableUpdateOnStartupWithoutEngine          : False
+# SignatureFallbackOrder                                : MicrosoftUpdateServer|MMPC
+# SignatureFirstAuGracePeriod                           : 120
+# SignatureScheduleDay                                  : 8
+# SignatureScheduleTime                                 : 01:45:00
+# SignatureUpdateCatchupInterval                        : 1
+# SignatureUpdateInterval                               : 0
+# SubmitSamplesConsent                                  : 0
+# ThreatIDDefaultAction_Actions                         :
+# ThreatIDDefaultAction_Ids                             :
+# ThrottleForScheduledScanOnly                          : True
+# TrustLabelProtectionStatus                            : 0
+# UILockdown                                            : False
+# UnknownThreatDefaultAction                            : 0
+# PSComputerName                                        :
+# CimClass                                              : root/Microsoft/Windows/Defender:MSFT_MpPreference
+# CimInstanceProperties                                 : {AllowDatagramProcessingOnWinServer, AllowNetworkProtectionDownLevel, AllowNetworkProtectionOnWinServer,
+#                                                         AllowSwitchToAsyncInspection...}
+# CimSystemProperties                                   : Microsoft.Management.Infrastructure.CimSystemProperties
+
+
+
+
+# ---Attempt: Registry read HKLM:\SOFTWARE\Microsoft\Windows Defender ---
+# [REG] HKLM:\SOFTWARE\Microsoft\Windows Defender:
+
+
+# ProductAppDataPath                   : C:\ProgramData\Microsoft\Windows Defender
+# ProductIcon                          : @C:\Program Files\Windows Defender\EppManifest.dll,-100
+# ProductLocalizedName                 : @C:\Program Files\Windows Defender\EppManifest.dll,-1000
+# RemediationExe                       : windowsdefender://
+# ProductType                          : 2
+# InstallTime                          : {129, 24, 113, 192...}
+# InstallLocation                      : C:\ProgramData\Microsoft\Windows Defender\Platform\4.18.25080.5-0\
+# ManagedDefenderProductType           : 0
+# OOBEInstallTime                      : {108, 140, 47, 232...}
+# ProductStatus                        : 0
+# HybridModeEnabled                    : 0
+# VerifiedAndReputableTrustModeEnabled : 0
+# DisableAntiSpyware                   : 0
+# DisableAntiVirus                     : 0
+# PUAProtection                        : 0
+# BackupLocation                       : C:\ProgramData\Microsoft\Windows Defender\Platform\4.18.24090.11-0
+# ServiceStartStates                   : 1
+# UUPFlags                             : 0
+# IsServiceRunning                     : 1
+# SAC_ClientWaitForRpc                 : 0
+# PSPath                               : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender
+# PSParentPath                         : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft
+# PSChildName                          : Windows Defender
+# PSDrive                              : HKLM
+# PSProvider                           : Microsoft.PowerShell.Core\Registry
+#
+# RETURN_CODE=0
 
 [CmdletBinding()]
 param()
@@ -18,7 +270,6 @@ $ErrorActionPreference = 'Continue'
 $overall = 0
 $anySuccess = $false
 
-Write-Output ("Run at: {0}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
 
 # 1) Get-MpComputerStatus - 防护状态（首选）
 try {
@@ -70,24 +321,6 @@ try {
 }
 catch {
     Write-Output ("[ERROR] Reading registry {0} failed: {1}" -f $rk1, $_.Exception.Message)
-    if ($overall -lt 4) { $overall = 4 }
-}
-
-try {
-    Write-Output '---Attempt: Registry read HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender (policy overrides) ---'
-    $rk2 = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender'
-    if (Test-Path -LiteralPath $rk2) {
-        $vals2 = Get-ItemProperty -Path $rk2 -ErrorAction Stop
-        Write-Output ("[REG] {0}:" -f $rk2)
-        $vals2 | Format-List * | Out-String | Write-Output
-        $anySuccess = $true
-    } else {
-        Write-Output ("[WARN] Registry key not found: {0}" -f $rk2)
-        if ($overall -lt 4) { $overall = 4 }
-    }
-}
-catch {
-    Write-Output ("[ERROR] Reading registry {0} failed: {1}" -f $rk2, $_.Exception.Message)
     if ($overall -lt 4) { $overall = 4 }
 }
 

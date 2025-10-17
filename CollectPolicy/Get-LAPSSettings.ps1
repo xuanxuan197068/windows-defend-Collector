@@ -1,24 +1,52 @@
-param([string]$OutputJson)
+<#
+Get-LAPSSettings.ps1
+通过注册表读取 LAPS（Windows LAPS 与旧版 AdmPwd LAPS）策略。
+不抛异常、不停止；末尾输出 RETURN_CODE 并同步 $global:LASTEXITCODE。
 
-$out = @{}
-# check if LAPS module present
-try {
-  Import-Module AdmPwd.PS -ErrorAction Stop
-  $out.Module = "AdmPwd.PS available"
-  $out.LAPSComputers = Get-AdmPwdPassword -ErrorAction SilentlyContinue
-} catch {
-  $out.Module = "AdmPwd.PS not installed"
-}
+Return codes:
+  0 = 至少读取到一个 LAPS 策略键并输出
+  1 = 未找到任何 LAPS 策略注册表键
+  2 = 读取注册表过程中发生错误（且未有任何成功输出）
+#>
+#调用方法：.\Get-LAPSSettings.ps1
 
-# Check for GPO registry locations that may hold LAPS settings (best-effort)
-$paths = @(
-  "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd",
-  "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LAPS",
-  "HKLM:\SOFTWARE\Microsoft\LAPS"
+[CmdletBinding()]
+param()
+
+$ErrorActionPreference = 'Continue'
+$overall = 0
+$anySuccess = $false
+
+Write-Output ("Run at: {0}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
+
+# 需要检查的注册表键（先新后旧）
+$keys = @(
+    'HKLM:\SOFTWARE\Policies\Microsoft\Windows\LAPS',           # Windows LAPS（2023+）
+    'HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd'         # 旧版 LAPS (AdmPwd)
 )
-foreach($p in $paths) {
-  $out[$p] = if(Test-Path $p) { Get-ItemProperty -Path $p -ErrorAction SilentlyContinue | Select-Object * -ExcludeProperty PS* } else { $null }
+
+foreach ($k in $keys) {
+    try {
+        if (Test-Path -LiteralPath $k) {
+            Write-Output ("---LAPS Policy Key Found: {0}---" -f $k)
+            # 输出该键及其所有值（以文本形式原样展开）
+            $item = Get-ItemProperty -Path $k -ErrorAction Stop
+            $item | Format-List * | Out-String | Write-Output
+            $anySuccess = $true
+        } else {
+            Write-Output ("[INFO] LAPS policy key not found: {0}" -f $k)
+        }
+    }
+    catch {
+        Write-Output ("[ERROR] Failed reading registry key {0}: {1}" -f $k, $_.Exception.Message)
+        if (-not $anySuccess -and $overall -lt 2) { $overall = 2 }
+    }
 }
 
-if($OutputJson){ $out | ConvertTo-Json -Depth 8 | Out-File $OutputJson -Encoding UTF8 }
-$out
+if (-not $anySuccess -and $overall -eq 0) {
+    # 两个键都不存在且无任何成功输出
+    $overall = 1
+}
+
+$global:LASTEXITCODE = $overall
+Write-Output ("RETURN_CODE={0}" -f $overall)
