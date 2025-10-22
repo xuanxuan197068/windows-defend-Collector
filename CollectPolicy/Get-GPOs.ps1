@@ -7,6 +7,7 @@ Return codes:
   2 - Get-GPO 执行失败
   3 - Get-GPOReport 失败或文件未生成（当传入 GpoReportPath 才可能）
   4 - gpresult 失败或文件未生成（当传入 GpResultHtmlPath 才可能）
+  1048 - 域成员信息获取失败
 #>
 #调用方法：.\Get-GPOs.ps1 [-GpoReportPath <path>]  [-GpResultHtmlPath <path>]
 #说明，该脚本路径需要是绝对路径。
@@ -63,6 +64,21 @@ param(
 $ErrorActionPreference = 'Continue'
 $overall = 0
 
+# ========== 0) 域成员信息 ==========
+try {
+    Write-Output '---Domain Membership (Get-ComputerInfo)---'
+    $ci = Get-ComputerInfo -ErrorAction Stop | Select-Object CsPartOfDomain, CsDomain, CsDomainRole
+    if ($ci) {
+        $ci | Format-List * | Out-String | Write-Output
+    } else {
+        Write-Output '[WARN] Get-ComputerInfo returned no data.'
+        $overall = 1048
+        #若失败状态码是1048
+    }
+}
+catch {
+    Write-Output ("[WARN] Get-ComputerInfo failed: {0}" -f $_.Exception.Message)
+}
 
 # 1) 概览：Get-GPO -All
 try {

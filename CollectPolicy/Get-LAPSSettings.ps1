@@ -10,7 +10,7 @@ Return codes:
 #>
 #调用方法：.\Get-LAPSSettings.ps1
 
-#添加使用命令wevtutil qe "Microsoft-Windows-LAPS/Operational" /c:50 /rd:true /f:text来查询日志的方法。
+
 
 [CmdletBinding()]
 param()
