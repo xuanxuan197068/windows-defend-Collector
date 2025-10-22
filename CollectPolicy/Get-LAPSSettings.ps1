@@ -10,6 +10,8 @@ Return codes:
 #>
 #调用方法：.\Get-LAPSSettings.ps1
 
+#添加使用命令wevtutil qe "Microsoft-Windows-LAPS/Operational" /c:50 /rd:true /f:text来查询日志的方法。
+
 [CmdletBinding()]
 param()
 
@@ -17,7 +19,7 @@ $ErrorActionPreference = 'Continue'
 $overall = 0
 $anySuccess = $false
 
-Write-Output ("Run at: {0}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
+
 
 # 需要检查的注册表键（先新后旧）
 $keys = @(
