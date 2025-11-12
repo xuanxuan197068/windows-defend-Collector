@@ -23,7 +23,9 @@ $anySuccess = $false
 
 # 需要检查的注册表键（先新后旧）
 $keys = @(
-    'HKLM:\SOFTWARE\Policies\Microsoft\Windows\LAPS',           # Windows LAPS（2023+）
+    'HKLM\Software\Microsoft\Policies\LAPS',
+    'HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\LAPS',#组策略。
+    'HKLM:\SOFTWARE\Policies\Microsoft\Windows\LAPS\Config',           # Windows LAPS（2023+）
     'HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd'         # 旧版 LAPS (AdmPwd)
 )
 
