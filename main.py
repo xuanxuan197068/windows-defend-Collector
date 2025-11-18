@@ -1,195 +1,164 @@
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Optional
+
+
+
+#一个字典存储所有脚本的相对路径
+SCRIPTS = {
+    "bitlockerstatus": "Encryption/Get-BitLockerStatus.ps1",
+    "certificatestores": "Encryption/Get-CertificateStores.ps1",
+    "lapsoperationallogs": "Encryption/Get-LAPSOperationalLogs.ps1",
+    "lapssettings": "Encryption/Get-LAPSSettings.ps1",
+    "eventslog": "Log/Get-EventsLog.ps1",
+    "firewallrules": "Protect-Update/Get-FirewallRules.ps1",
+    "installedpatches": "Protect-Update/Get-InstalledPatches.ps1",
+    "updatelog": "Protect-Update/Get-UpdateLog.ps1",
+    "windowsdefenderstatus": "Protect-Update/Get-WindowsDefenderStatus.ps1",
+    "windowsupdateregistry": "Protect-Update/Get-WindowsUpdateRegistry.ps1",
+    "auditpolicy": "System-Audit/Get-AuditPolicy.ps1",
+    "gpos": "System-Audit/Get-GPOs.ps1",
+    "servicessecurity": "System-Audit/Get-ServicesSecurity.ps1",
+    "aclonpath": "Users-Permissions/Get-ACLonPath.ps1",
+    "localuseraccounts": "Users-Permissions/Get-LocalUserAccounts.ps1",
+    "passwordpolicy": "Users-Permissions/Get-PasswordPolicy.ps1",
+    "uacsettings": "Users-Permissions/Get-UACSettings.ps1",
+}
 
 
 # ===== 1. 基本配置 =====
-# 你可以改成绝对路径，例如：
-# SCRIPT_PATH = Path(r"C:\Scripts\Get-GPOs.ps1")
-SCRIPT_PATH = Path(__file__).parent / "Get-GPOs.ps1"
+if len(sys.argv) < 2:
+    print("argv not enough")
+    sys.exit(3)
+elif SCRIPTS.get(sys.argv[1],0) == 0:
+    print("argv invaild")
+    sys.exit(4)
+SCRIPT_BASE_DIR = Path(__file__).parent / "CollectPolicyScript"
+SCRIPT_PATH = SCRIPT_BASE_DIR / SCRIPTS[sys.argv[1]]
 POWERSHELL = "powershell"  # 如果用 PowerShell 7，可以改成 "pwsh"
-print(SCRIPT_PATH)
 
 # ===== 2. 调用 PowerShell 脚本 =====
 def run_powershell_script(script_path: Path, extra_args: Optional[List[str]] = None) -> str:
-    """
-    调用 PowerShell 脚本，返回 stdout 文本（UTF-8）
-    """
-    if extra_args is None:
-        extra_args = []
-
     cmd = [
         POWERSHELL,
         "-NoProfile",
         "-ExecutionPolicy", "Bypass",
-        "-File", str(script_path)
-    ] + extra_args
+        "-File", str(script_path),
+    ]
+
+    # 添加额外参数
+    if extra_args:
+        cmd.extend(extra_args)
 
     try:
         completed = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
-            encoding="utf-8",
-            timeout=120,
+            encoding="gbk",
         )
-    except FileNotFoundError:
-        print(f"[ERROR] 找不到 PowerShell 可执行文件: {POWERSHELL}", file=sys.stderr)
-        sys.exit(1)
-    except subprocess.TimeoutExpired as e:
-        print(f"[ERROR] 脚本执行超时: {str(e)}", file=sys.stderr)
+    except Exception as e:
+        print(f"[ERROR] 调用 PowerShell 失败: {e}", file=sys.stderr)
         sys.exit(1)
 
     if completed.stderr:
-        # 注意：这里不会中断，只是打印一下 stderr，真正的错误以 RETURN_CODE 为准
-        print("[PS STDERR]", file=sys.stderr)
+        # 只打印一下 stderr，不做复杂处理
+        print("=== PowerShell STDERR ===", file=sys.stderr)
         print(completed.stderr, file=sys.stderr)
+        print("=========================", file=sys.stderr)
 
     return completed.stdout
 
 
 # ===== 3. 解析脚本输出 =====
-def parse_script_output(output: str) -> Dict[str, Any]:
+def parse_output(output_text: str):
     """
-    解析脚本输出：
+    按 ---...--- 分割区域，单独解析一次 RETURN_CODE。
 
-    输入示例：
-        ---Attempt: Get-GPO -All (GroupPolicy module)---
-        <很多行...>
-
-        ---Get-GPOReport -All -ReportType Html -Path "C:\\AllGPOs1.html"---
-        [INFO] GPO HTML report generated: C:\\AllGPOs1.html
-        ...
-        RETURN_CODE=0
-
-    返回结构：
-    {
-        "sections": [
-            {
-                "header": "Attempt: Get-GPO -All (GroupPolicy module)",
-                "command": "Get-GPO -All (GroupPolicy module)",   # 可选解析
-                "lines": ["Id : 31b2...", "DisplayName : ...", ...]
-            },
-            {
-                "header": "Get-GPOReport -All -ReportType Html -Path \"C:\\AllGPOs1.html\"",
-                "command": "Get-GPOReport -All -ReportType Html -Path \"C:\\AllGPOs1.html\"",
-                "lines": ["[INFO] GPO HTML report generated: C:\\AllGPOs1.html"]
-            },
-            ...
-        ],
-        "return_code": 0,      # 若找不到则为 None
-        "raw": "<原始完整输出>"
-    }
+    返回:
+      sections: [ {"header": str, "lines": [str, ...]}, ... ]
+      return_code: int 或 None
     """
-    lines = output.splitlines()
-    sections: List[Dict[str, Any]] = []
+    lines = output_text.splitlines()
 
-    current_header: Optional[str] = None
-    current_lines: List[str] = []
-    return_code: Optional[int] = None
+    sections = []
+    current_header = None
+    current_lines = []
+    return_code = None
 
     def flush_section():
-        """收尾当前 section"""
-        nonlocal current_header, current_lines, sections
+        nonlocal current_header, current_lines
+        # 没有 header 且没有内容，就不要创建空 section
         if current_header is None and not current_lines:
             return
-        header = current_header or "GLOBAL"
-        header_stripped = header.strip()
-        # 如果有 "Attempt: xxx" 的格式，提取后面的命令部分
-        if header_stripped.lower().startswith("attempt:"):
-            command = header_stripped.split(":", 1)[1].strip()
-        else:
-            command = header_stripped
-
+        header = current_header or ""
         sections.append({
-            "header": header_stripped,
-            "command": command,
-            "lines": current_lines[:],  # 拷贝一份
+            "header": header,
+            "lines": current_lines[:]
         })
         current_header = None
         current_lines = []
 
-    for raw_line in lines:
-        line = raw_line.rstrip("\n")
+    for line in lines:
         stripped = line.strip()
 
-        # 空行：保留在当前 section 里
-        if stripped == "":
-            current_lines.append(line)
-            continue
-
-        # RETURN_CODE=... 行
+        # 1) 处理 RETURN_CODE，只要解析一次，不加入任何 section
         if stripped.startswith("RETURN_CODE="):
-            # 收尾最后一个 section
+            # 先把当前 section 收尾
             flush_section()
-            rc_str = stripped.split("=", 1)[1].strip()
+            code_str = stripped.split("=", 1)[1].strip()
             try:
-                return_code = int(rc_str)
+                return_code = int(code_str)
             except ValueError:
-                # 解析失败也保留原字符串
                 return_code = None
+            # 不把这行加入 current_lines
             continue
 
-        # ---...--- 分割行
+        # 2) 处理 ---xxx--- 分隔行：开启一个新的 section
         if stripped.startswith("---") and stripped.endswith("---") and len(stripped) >= 6:
-            # 先把前一个 section 收尾
             flush_section()
-            # 去掉两端的 --- 和空格
             inner = stripped.strip("-").strip()
-            current_header = inner
+            current_header = inner  # 这里存 header 文本
             current_lines = []
             continue
 
-        # 普通内容行
-        if current_header is None:
-            # 没有 header 的情况也允许存在，归为 GLOBAL
-            current_header = "GLOBAL"
+        # 3) 普通内容行，直接加入当前 section 内容
         current_lines.append(line)
 
-    # 结束循环后，可能还有最后一个 section
+    # 处理最后一个 section
     flush_section()
 
-    return {
-        "sections": sections,
-        "return_code": return_code,
-        "raw": output,
-    }
+    return sections, return_code
 
 
-# ===== 4. Demo：主函数 =====
 def main():
-    if not SCRIPT_PATH.exists():
-        print(f"[ERROR] 找不到脚本: {SCRIPT_PATH}", file=sys.stderr)
+    if not Path(SCRIPT_PATH).exists():
+        print(f"[ERROR] 找不到脚本: {SCRIPT_PATH}")
         sys.exit(1)
 
-    print(f"[INFO] 正在运行脚本: {SCRIPT_PATH}")
-    output = run_powershell_script(SCRIPT_PATH)
+    script_extra_args = sys.argv[2:] if len(sys.argv) > 2 else None
+    
+    # 1. 调脚本拿到原始输出
+    output = run_powershell_script(SCRIPT_PATH,script_extra_args)
+    
+    # 2. 解析输出
+    sections, return_code = parse_output(output)
+    #print(sections)
 
-    # 解析输出
-    parsed = parse_script_output(output)
+    # 3. 输出各个 section 内容（不包含 RETURN_CODE，不包含 command）
+    print("===== 分割后的内容 =====")
+    for i, sec in enumerate(sections, start=1):
+        print(f"\n--- Section {i} ---")
+        header = sec["header"] or "无"
+        print(f"[HEADER] {header}")
+        print("[CONTENT]")
+        for ln in sec["lines"]:
+            print(ln)
 
-    # 简单打印解析结果示例：你可以改成写入 JSON / DB / 发送到别的系统
-    print("============== PARSED RESULT ==============")
-    print(f"RETURN_CODE: {parsed['return_code']}")
-    print(f"共解析到 {len(parsed['sections'])} 个防御策略区域\n")
-
-    for idx, sec in enumerate(parsed["sections"], start=1):
-        print(f"[SECTION {idx}] {sec['header']}")
-        print(f"  关联命令: {sec['command']}")
-        print("  内容预览:")
-        # 只展示前几行，避免太长
-        preview_lines = sec["lines"][:8]
-        for pl in preview_lines:
-            print("    " + pl)
-        if len(sec["lines"]) > len(preview_lines):
-            print(f"    ... (共 {len(sec['lines'])} 行)")
-        print()
-
-    # 如果你后面要用结构化结果：
-    # 比如只拿 GPO 那一段：
-    # gpo_sections = [s for s in parsed["sections"] if "Get-GPO" in s["command"]]
-    # ...
+    # 4. 最后单独输出一次 RETURN_CODE
+    print("\n===== RETURN_CODE =====")
+    print(return_code)
 
 
 if __name__ == "__main__":

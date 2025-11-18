@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "调试 main.py（选择脚本）",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",                // 当前打开的 main.py
+            "console": "integratedTerminal",
+            "cwd": "${fileDirname}",             // 保证在 main.py 所在目录运行
+            "args": [
+                "${input:policyName}"            // 把输入作为 sys.argv[1]
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "policyName",
+            "type": "promptString",
+            "description": "输入要执行的策略名称",
+            "default": "bitlockerstatus"
+        }
+    ]
+}

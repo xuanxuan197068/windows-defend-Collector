@@ -1,6 +1,6 @@
 # <center>脚本集说明文档</center>
 ## 1、分类建模
-
+### 详见pdf文件
 
 ## 2、脚本集
 
@@ -222,5 +222,29 @@
 
 ***
 
-## 3、开发计划
-+ 主程序采用python开发，对采集的数据进行进一步处理。同时，可以实现进度条和断点功能。
+## 3、python主程序说明
+程序初步可以根据需求实现对脚本的调用，并进行简单数据处理，以下是使用方法介绍：
+调用方法：`main.py <function> [argv]`
+
+### 3.1 脚本缩写与说明
+缩写需要填入到function处
+
+| 缩写              | 脚本说明                                      | 是否需要传入参数 |
+|-------------------|-----------------------------------------------|------------------|
+| bitlockerstatus   | 查询 BitLocker 卷的加密与保护状态             | 是               |
+| certificatestores | 列出本地计算机证书存储                       | 否               |
+| lapsoperationallogs | 读取 LAPS 操作事件日志                      | 是               |
+| lapssettings      | 检查 LAPS 配置与相关日志                     | 否               |
+| eventslog         | 导出指定事件日志的最新若干条记录             | 是               |
+| firewallrules     | 列出本机防火墙规则                           | 否               |
+| installedpatches  | 列出已安装补丁                               | 否               |
+| updatelog         | 导出/生成 Windows Update 日志                | 是               |
+| windowsdefenderstatus | 收集 Windows Defender 状态与偏好设置      | 否               |
+| windowsupdateregistry | 读取与 Windows Update 相关的注册表路径    | 否               |
+| auditpolicy       | 获取系统审计策略                             | 否               |
+| gpos              | 列出域/本地的 GPO 并生成 HTML 报告           | 是               |
+| servicessecurity  | 列出系统服务及其配置/状态                    | 否               |
+| aclonpath         | 检查指定文件或路径的 ACL                     | 是               |
+| localuseraccounts | 获取本地用户账号详情                         | 否               |
+| passwordpolicy    | 获取密码策略                                 | 是               |
+| uacsettings       | 读取 UAC 的常用设置项                        | 否               |
