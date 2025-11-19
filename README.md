@@ -233,7 +233,7 @@
 |-------------------|-----------------------------------------------|------------------|
 | bitlockerstatus   | 查询 BitLocker 卷的加密与保护状态             | 是               |
 | certificatestores | 列出本地计算机证书存储                       | 否               |
-| lapsoperationallogs | 读取 LAPS 操作事件日志                      | 是               |
+| lapsoperationallogs | 读取 LAPS 操作事件日志                      | 否               |
 | lapssettings      | 检查 LAPS 配置与相关日志                     | 否               |
 | eventslog         | 导出指定事件日志的最新若干条记录             | 是               |
 | firewallrules     | 列出本机防火墙规则                           | 否               |
