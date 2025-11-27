@@ -248,3 +248,10 @@
 | localuseraccounts | 获取本地用户账号详情                         | 否               |
 | passwordpolicy    | 获取密码策略                                 | 是               |
 | uacsettings       | 读取 UAC 的常用设置项                        | 否               |
+
+
+## 4、TODO
+1. 完善主程序
+2. 调研相关策略工具
+3. 分析获取结果。
+4. 规格化输出结果（LLM？）

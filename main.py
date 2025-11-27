@@ -2,8 +2,7 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import List, Optional
-
-
+from html.parser import HTMLParser
 
 #一个字典存储所有脚本的相对路径
 SCRIPTS = {
@@ -26,6 +25,19 @@ SCRIPTS = {
     "uacsettings": "Users-Permissions/Get-UACSettings.ps1",
 }
 
+
+class TextExtractor(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.text_parts = []
+
+    def handle_data(self, data):
+        text = data.strip()
+        if text:
+            self.text_parts.append(text)
+
+    def get_text(self):
+        return "\n".join(self.text_parts)
 
 # ===== 1. 基本配置 =====
 if len(sys.argv) < 2:
@@ -69,6 +81,57 @@ def run_powershell_script(script_path: Path, extra_args: Optional[List[str]] = N
         print("=========================", file=sys.stderr)
 
     return completed.stdout
+
+# 对于GPO策略的获取，需要对生成文件进一步处理读取
+def ReadGpoContent():
+    
+    # 1. 获取当前目录作为输出基准
+    base_dir = Path(__file__).parent.resolve()
+
+    gpo_report = base_dir / "GPO_Report.html"
+    gpresult_report = base_dir / "GPResult_Report.html"
+
+    # 2. 调用脚本（传入两个绝对路径）
+    output = run_powershell_script(
+        SCRIPT_PATH,
+        extra_args=[str(gpo_report), str(gpresult_report)]
+    )
+
+    # 3. 读取两个文件内容
+    overall_text = ""
+    gpresult_text = ""
+
+    if gpo_report.exists():
+        parser = TextExtractor()
+        overall_rawtext = gpo_report.read_text(encoding="utf-8", errors="replace")
+        parser.feed(overall_rawtext)
+        overall_text = parser.get_text()
+        print(overall_text)
+
+
+    if gpresult_report.exists():
+        parser = TextExtractor()
+        gpresult_rawtext = gpresult_report.read_text(encoding="gbk", errors="replace")
+        parser.feed(gpresult_rawtext)
+        gpresult_text = parser.get_text()
+        print(gpresult_text)
+
+    # 4. 删除文件
+    try:
+        if gpo_report.exists():
+            gpo_report.unlink()
+        if gpresult_report.exists():
+            gpresult_report.unlink()
+    except Exception as e:
+        print(f"[WARN] 删除报告文件失败: {e}")
+
+    # 5. 返回给主程序处理
+    return {
+        "overall": overall_text,
+        "gpresult": gpresult_text,
+        "raw_output": output
+    }
+    
 
 
 # ===== 3. 解析脚本输出 =====
@@ -139,8 +202,17 @@ def main():
 
     script_extra_args = sys.argv[2:] if len(sys.argv) > 2 else None
     
+    
     # 1. 调脚本拿到原始输出
-    output = run_powershell_script(SCRIPT_PATH,script_extra_args)
+    if sys.argv[1] == "gpos":
+        Rawoutput = ReadGpoContent()
+        exit()
+        print(Rawoutput["overall"])
+        print(Rawoutput["gpresult"])
+        output = Rawoutput["raw_output"]
+    else:
+      output = run_powershell_script(SCRIPT_PATH,script_extra_args)      
+
     
     # 2. 解析输出
     sections, return_code = parse_output(output)
