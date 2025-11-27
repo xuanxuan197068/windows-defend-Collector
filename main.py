@@ -2,7 +2,8 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import List, Optional
-from html.parser import HTMLParser
+
+
 
 #一个字典存储所有脚本的相对路径
 SCRIPTS = {
@@ -26,18 +27,6 @@ SCRIPTS = {
 }
 
 
-class TextExtractor(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self.text_parts = []
-
-    def handle_data(self, data):
-        text = data.strip()
-        if text:
-            self.text_parts.append(text)
-
-    def get_text(self):
-        return "\n".join(self.text_parts)
 
 # ===== 1. 基本配置 =====
 if len(sys.argv) < 2:
@@ -102,19 +91,18 @@ def ReadGpoContent():
     gpresult_text = ""
 
     if gpo_report.exists():
-        parser = TextExtractor()
-        overall_rawtext = gpo_report.read_text(encoding="utf-8", errors="replace")
-        parser.feed(overall_rawtext)
-        overall_text = parser.get_text()
-        print(overall_text)
+        with open(str(gpo_report), 'r', encoding="utf-16") as f:
+            for _ in range(1000):
+                f.readline()  # Skip the first 200 lines
+            overall_text = f.read()
 
 
     if gpresult_report.exists():
-        parser = TextExtractor()
-        gpresult_rawtext = gpresult_report.read_text(encoding="gbk", errors="replace")
-        parser.feed(gpresult_rawtext)
-        gpresult_text = parser.get_text()
-        print(gpresult_text)
+        with open(str(gpresult_report), 'r', encoding="utf-16") as f:
+            for _ in range(1250):
+                f.readline()  # Skip the first 200 lines
+            gpresult_text = f.read()
+
 
     # 4. 删除文件
     try:
@@ -206,7 +194,6 @@ def main():
     # 1. 调脚本拿到原始输出
     if sys.argv[1] == "gpos":
         Rawoutput = ReadGpoContent()
-        exit()
         print(Rawoutput["overall"])
         print(Rawoutput["gpresult"])
         output = Rawoutput["raw_output"]
