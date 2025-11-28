@@ -40,10 +40,16 @@
     
 	+ A-Z:定义了将要查询bitlocker状态的盘符。
 
+| 安全参数           |     参数说明     |安全基线           | 
+|-------------------|------------------|------------------|
+| ProtectionStatus   | 保护状态|安全 true  -- 危险 false             |
+| VolumeStatus       | 卷状态|安全 FullyEncrypted-- 危险 FullyDecrypted |
+
+
 ***
 
 
-4. **Get-CertificateStores.ps1**
+1. **Get-CertificateStores.ps1**
 
 	功能描述：列出本地计算机证书存储（例如 Root/CA/TrustedPeople），显示主题、指纹与到期时间，便于信任链核查。
 
@@ -138,7 +144,7 @@
 
 	功能描述：获取密码策略（Domain 或 Local 范围），包含 net accounts、secedit 导出等信息。
 
-	收集目的：校验密码复杂度/历史/锁定等参数是否满足基线与合规要求。
+	收集目的：校验密码复杂度/历史/锁定等参数是否满足基线与合规要求，包括一部分登入安全策略。
 
 	调用方法：`.\Get-PasswordPolicy.ps1 -Scope <Domain|Local>`
 
@@ -146,10 +152,25 @@
     
 	+ -Scope定义了你将要收集本地密码策略还是域密码策略。
 
+| 安全参数           |     参数说明     |安全基线           | 
+|-------------------|------------------|------------------|
+| LockoutBadCount   | 锁定阈值|安全 5~10  -- 危险 0 |
+| RestrictAnonymous   | 匿名 SID 枚举允许|安全 0  -- 危险 1 |
+| RestrictAnonymousSAM   |禁止匿名枚举 SAM|安全 1  -- 危险 0 |
+| LimitBlankPasswordUse   |禁止空密码远程登录|安全 1  -- 危险 0 |
+| EnableSecuritySignature   |启用签名|安全 1  -- 危险 0 |
+| NoLMHash   |不允许保存弱 LM Hash|安全 1  -- 危险 0 |
+| 密码长度最小值   ||安全 >=10  -- 危险 <10 |
+| 密码复杂度   |要求大小写/数字/特殊字符|安全 1  -- 危险 0 |
+| 密码最长使用期限   ||安全 <=30  -- 危险 >45 |
+| 密码历史   ||安全 >=24  -- 危险 <10 |
+
+
+
 ***
 
 
-12. **Get-ServicesSecurity.ps1**
+1.  **Get-ServicesSecurity.ps1**
 
 	功能描述：列出系统服务及其配置/状态（使用 Win32_Service / Get-CimInstance）。
 
@@ -168,6 +189,14 @@
 
 	调用方法：`.\Get-UACSettings.ps1`
 
+| 安全参数           |     参数说明     |安全基线           | 
+|-------------------|------------------|------------------|
+| EnableLUA   | UAC总开关|安全 1  -- 危险 0 |
+| ConsentPromptBehaviorAdmin   | 管理员提升提示级别|安全 2,3,5  -- 危险 0 |
+| PromptOnSecureDesktop   | 安全桌面|安全 1 -- 危险 0 |
+| ConsentPromptBehaviorUser   | 标准用户提权行为|安全 3  |
+| EnableSecureUIAPaths   | 保护 UI 自动化路径|安全 1 -- 危险 0  |
+| EnableUIADesktopToggle   | 是否允许用户在 UI Access 程序之间切换桌面。|安全 0 -- 危险 1  |
 ***
 
 
@@ -194,16 +223,33 @@
 
 	调用方法：`.\Get-WindowsDefenderStatus.ps1`
 
+
+| 安全参数           |     参数说明     |安全基线           | 
+|-------------------|------------------|------------------|
+| RealTimeProtectionEnabled   | 实时防护|安全 true  -- 危险 false |
+| OnAccessProtectionEnabled   | 访问扫描|安全 true  -- 危险 false |
+| BehaviorMonitorEnabled   | 行为监控|安全 true  -- 危险 false |
+| IoavProtectionEnabled   | 下载/文件来源扫描|安全 true  -- 危险 false |
+| NISEnabled   | 网络入侵防护|安全 true  -- 危险 false |
+| EnableNetworkProtection   | 网络保护|安全 1  -- 危险 0 |
+| ControlledFolderAccess  | 受控文件夹访问|安全 1  -- 危险 0 |
+| AntivirusEnabled  | Windows Defender 服务|安全 true  -- 危险 false |
+
 ***
 
 
-16. **Get-WindowsUpdateRegistry.ps1**
+1.  **Get-WindowsUpdateRegistry.ps1**
 
 	功能描述：读取与 Windows Update / AU 相关的注册表路径并可输出，便于自动化分析。
 
 	收集目的：核对更新通道、延期与强制策略等关键项，评估补丁及时性与策略一致性。
 
 	调用方法：`.\Get-WindowsUpdateRegistry.ps1`
+
+| 安全参数           |     参数说明     |安全基线           | 
+|-------------------|------------------|------------------|
+| NoAutoUpdate   | 关闭自动更新|安全 0  -- 危险 1 |
+| NNoAUShutdownOption   | 禁止关机时安装更新|安全 0  -- 危险 1 |
 
 ***
 
@@ -242,7 +288,7 @@
 | windowsdefenderstatus | 收集 Windows Defender 状态与偏好设置      | 否               |
 | windowsupdateregistry | 读取与 Windows Update 相关的注册表路径    | 否               |
 | auditpolicy       | 获取系统审计策略                             | 否               |
-| gpos              | 列出域/本地的 GPO 并生成 HTML 报告           | 是               |
+| gpos              | 列出域/本地的 GPO 并生成 HTML 报告           | 否 **(主程序自动读取)**|
 | servicessecurity  | 列出系统服务及其配置/状态                    | 否               |
 | aclonpath         | 检查指定文件或路径的 ACL                     | 是               |
 | localuseraccounts | 获取本地用户账号详情                         | 否               |
